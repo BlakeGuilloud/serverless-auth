@@ -1,0 +1,33 @@
+service: serverless-auth
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  environment:
+    MONGODB_URI: ${file(./config.yml):MONGODB_URI}
+    JWT_SECRET: ${file(./config.yml):JWT_SECRET}
+
+functions:
+  register:
+    handler: handler.register
+    events:
+      - http:
+          path: register
+          method: post
+          cors: true
+
+  login:
+    handler: handler.login
+    events:
+      - http:
+          path: login
+          method: post
+          cors: true
+
+  getUser:
+    handler: handler.getUser
+    events:
+      - http:
+          path: getUser
+          method: get
+          cors: true

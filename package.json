@@ -1,0 +1,19 @@
+{
+  "name": "serverless-auth",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:BlakeGuilloud/serverless-auth.git",
+  "author": "Blake Guilloud <blake.guilloud@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "bluebird": "^3.5.0",
+    "jsonwebtoken": "^7.4.3",
+    "mongoose": "^4.11.9"
+  },
+  "scripts": {
+    "mock:register": "SLS_DEBUG=true serverless invoke local --function register -p mocks/register.json",
+    "mock:login": "SLS_DEBUG=true serverless invoke local --function login -p mocks/login.json",
+    "mock:getUser": "SLS_DEBUG=true serverless invoke local --function getUser -p mocks/getUser.json"
+  }
+}
