@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bluebird = require('bluebird');
 mongoose.Promise = bluebird;
 
+const JWT_SECRET = process.env.JWT_SECRET;
 const mongoString = process.env.MONGODB_URI;
 const db = mongoose.connect(mongoString).connection;
 
@@ -14,8 +15,8 @@ const Resolver = require('./utils/Resolver');
 const User = require('./User.model');
 
 module.exports.register = (event, context, callback) => {
-  const data = event.body;
-  // const data = JSON.parse(event.body);
+  // const data = event.body;
+  const data = JSON.parse(event.body);
 
   const newUser = new User(data);
   
@@ -25,8 +26,8 @@ module.exports.register = (event, context, callback) => {
 };
 
 module.exports.login = (event, context, callback) => {
-  const data = event.body;
-  // const data = JSON.parse(event.body);
+  // const data = event.body;
+  const data = JSON.parse(event.body);
 
   bluebird.resolve(User.findOne({ email: data.email }))
     .then(user => {
@@ -47,11 +48,7 @@ module.exports.login = (event, context, callback) => {
       } else {
         const response = {
           statusCode: 200,
-          auth: jwt.sign({
-            email: user.email,
-            fullName: user.fullName,
-            _id: user._id
-          }, process.env.JWT_SECRET),
+          auth: jwt.sign({ email: user.email, fullName: user.fullName, _id: user._id }, JWT_SECRET),
         };
       
         callback(null, response);
@@ -63,12 +60,12 @@ module.exports.login = (event, context, callback) => {
 
 module.exports.getUser = (event, context, callback) => {
   try {
-    const decoded = jwt.verify(event.headers.Authorization, process.env.JWT_SECRET);
+    const decoded = jwt.verify(event.headers.Authorization, JWT_SECRET);
     
     callback(null, {
       statusCode: 200,
       body: JSON.stringify(decoded),
-    })
+    });
   } catch(err) {
     const response = {
       statusCode: 500,
