@@ -28,27 +28,31 @@ module.exports.register = (event, context, callback) => {
 module.exports.login = (event, context, callback) => {
   // const data = event.body;
   const data = JSON.parse(event.body);
-
+  console.log('data', data);
   bluebird.resolve(User.findOne({ email: data.email }))
     .then(user => {
+      console.log('user', user);
       if (!user) {
         const response = {
           statusCode: 403,
-          error: 'Incorrect username',
+          // error: 'Incorrect username',
         };
       
         callback(null, response); 
       } else if (!user.comparePassword(data.password)) {
         const response = {
           statusCode: 403,
-          error: 'Incorrect password',
+          // error: 'Incorrect password',
         };
       
         callback(null, response); 
       } else {
+        console.log('success');
+        const auth = jwt.sign({ email: user.email, fullName: user.fullName, _id: user._id }, JWT_SECRET);
+        console.log('AUTH : ', auth);
         const response = {
           statusCode: 200,
-          auth: jwt.sign({ email: user.email, fullName: user.fullName, _id: user._id }, JWT_SECRET),
+          auth: JSON.stringify(auth),
         };
       
         callback(null, response);
